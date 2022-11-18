@@ -26,8 +26,12 @@ const User = sequelize.define('user', {
         type: Sequelize.STRING,
         
     },
-    location:{
-        type:Sequelize.STRING,
+    lon:{
+        type:Sequelize.DOUBLE,
+        allowNull:false
+    },
+    lat:{
+        type:Sequelize.DOUBLE,
         allowNull:false
     }
    

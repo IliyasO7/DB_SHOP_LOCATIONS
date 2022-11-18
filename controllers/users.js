@@ -32,8 +32,17 @@ exports.signup = async(req ,res,next)=>{
 exports.signup = async(req ,res,next)=>{
 
   try {
-      const {username, email, password} = req.body ;
+      const {username, email, password,location} = req.body ;
+   
+      console.log('>>>>>>>>>>>');
+      //console.log(location.lon);
+      let lon = location.lon;
+      let lat = location.lat
 
+
+      
+    
+      console.log('////');
       if(!username || !email || !password){
           return res.status(400).json({message:'add all fields'})
       }
@@ -44,7 +53,7 @@ exports.signup = async(req ,res,next)=>{
         else{
             bcrypt.hash(password, 10 , async (err , hash)=>{
               console.log(err)
-              await User.create({username, email, password: hash})
+              await User.create({username, email, password: hash,lon,lat})
               res.status(201).json({message : 'successfully created user'})
             })
         }
