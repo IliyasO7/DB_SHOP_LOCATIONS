@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop locators</title>
+   
+    <link rel="stylesheet" href="./shop.css" />
+  </head>
+  <body>
+
+    <section class="row">
+      <div id="left" class="dark">
+        <div id="nav">
+           
+            <a href="../search/search.html" id="home">Search for products</a>
+          </div>
+    
+        <div id="listurl-div" class="dark">
+          
+        </div>
+      </div>
+    </section>
+
+
+    <section class="msger group" id="group-section">
+        <div style="text-align:center;padding: 10px;">
+            <h1>Welcome <span id="welcomename">User</span></h1>
+        </div>
+        <button id="logout" class="logout">logout</button>
+      <header class="msger-header">
+        <form onsubmit="createGroup(event)" class="msger-inputarea" id="group-form">
+          <input
+            type="text"
+            class="msger-input"
+            placeholder="Create shop..."
+            name="group1"
+            autocomplete="off"
+          />
+          <span></span>
+          <input type="Number" class="msger-input"
+          placeholder="longitude..."
+          id="groups"
+          name="group2" />
+          <span></span>
+          <input type="Number" class="msger-input"
+          placeholder="latitude..."
+          name="group3" />
+
+          <span></span>
+          <input type="Number" class="msger-input"
+          placeholder="shopId..."
+          name="group4" />
+          
+
+          <button type="submit" class="group-send-btn">+
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          </button>
+        </form>
+      </header>
+      <main class="msger-chat" id="groupss">
+        <!-- <div class="group-name" id="group-name-btn">Group 1</div> -->
+      </main>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js" ></script>
+   
+
+
+
+    <script>
+
+      async  function createGroup(event){
+            const token = localStorage.getItem('token');
+            event.preventDefault();
+            const grp1 = event.target.group1.value;
+            const grp2 = event.target.group2.value;
+            const grp3 = event.target.group3.value;
+            const grp4 = event.target.group4.value;
+
+            const group = {
+                grp1,
+                grp2,
+                grp3,
+                grp4
+            }
+
+            try{
+                let response = await axios.post('http://localhost:5000/search/allProducts' ,group , {headers:{'Authorization':token}});
+                console.log(response);
+                event.target.group1.value = "";
+                event.target.group2.value = "";
+                event.target.group3.value = "";
+                event.target.group4.value = "";
+
+                loadScreen(event);
+            }
+            catch(error){
+                console.log(error);
+            }
+
+
+
+
+
+
+
+        }
+        async function loadScreen(event){
+            const token = localStorage.getItem('token');
+            event.preventDefault();
+
+          
+            //event.target.welcomename.value = `${name}`
+          
+            console.log(token)
+            try {
+                let response = await axios.get('http://localhost:5000/shop/getShops' , {headers:{'Authorization':token}});
+
+                console.log('?//??????');
+                console.log(response);
+                console.log(response.data.data)
+                let groupList = document.getElementById("groupss");
+                groupList.innerHTML = '';
+                showOnScreen(response.data.data)
+            } catch (err) {
+                console.log(err);
+            }
+}
+
+
+        window.addEventListener('DOMContentLoaded', async(event)=>{
+            event.preventDefault();
+            const token = localStorage.getItem('token');
+           
+
+          //  event.target.welcomename.value = `${name}`
+
+            try{
+
+                let response = await axios.get('http://localhost:5000/shop/getShops', {headers:{'Authorization':token}})
+                console.log(response);
+
+                let groupList = document.getElementById("groupss");
+                groupList.innerHTML = '';
+                showOnScreen(response.data.data);
+
+
+            }
+            catch(error){
+                console.log(error);
+            }
+
+
+
+
+        })
+
+
+        function showOnScreen(data){
+          console.log('77777777777777');
+          console.log(data);
+            let groupList = document.getElementById("groupss");
+            console.log(groupList);
+
+            data.forEach(element => {
+              console.log(element.shopName);
+              console.log(element.shopId);
+             const child = `<div class="group-name" id="group-name-btn" onClick="openGroup('${element.id}','${element.shopName}')">${element.shopName}</div>`
+
+              groupList.innerHTML += child
+              console.log(groupList);
+            });
+
+
+        }
+
+        function openGroup(shopId,shopName){
+
+        console.log(shopId)
+        console.log(shopName)
+       
+        
+        localStorage.setItem('shopId' , shopId)
+        localStorage.setItem('shopName' , shopName)
+        console.log('****END****');
+        window.location.href = '../prod/prod.html'
+}
+
+
+
+
+
+
+
+    </script>
+  </body>
+</html>

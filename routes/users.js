@@ -14,6 +14,9 @@ const router = express.Router();
 
 router.get('/products',productController.productController);
 
+router.post('/signup', userController.signup)
+
+router.post('/login',userController.login)
 
 /*
 router.post('/signup', userController.signup)

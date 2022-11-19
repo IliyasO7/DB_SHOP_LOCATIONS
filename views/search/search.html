@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Search Page</title>
+    <link rel="stylesheet" href="../search/search.css">
+</head>
+
+    <body>
+        <div class="center">
+            <h1>Search Products</h1>
+            <form onsubmit="signUp(event)" method="POST" id="signup-form">
+                <div class="txt_field">                 
+                    <input type="text" name="title"  required/>
+                    <span></span>
+                    <label>Search by title</label>
+                </div>
+
+               
+               
+                <button id="submit"> Search </button>
+                
+            </form>
+           
+            
+            <div id="existing"></div>
+            
+            <ul class="shopping" id='listOfUsers' ></ul>
+
+
+        </div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js" ></script>
+        <!--request the server for the code for network calls-->
+
+        <script >
+    
+              async function signUp(event) {
+                event.preventDefault();
+
+                let token = localStorage.getItem("token");
+
+            
+
+                const title = event.target.title.value;
+               
+             
+                
+                const obj = {
+                    title,
+                    
+                  
+                
+                }
+                console.log('1255');
+                console.log(obj);
+
+               let response = await axios.post(`http://localhost:5000/search/allProducts`, obj, {headers:{'Authorization':token}})
+            
+                    
+                    console.log(response);
+                    console.log(response.data.data);
+
+                    console.log('--------------------');
+
+                    let coordinates = JSON.parse(localStorage.getItem("coordinates"))
+                    console.log(coordinates);
+
+                    let userlon = coordinates[0][0]
+                    let userlat = coordinates[0][1]
+                    console.log('~~~~~~~~~~~~~~~~~~~');
+                    console.log(userlon);
+                    console.log(userlat);
+                   // console.log(response.data.data[0][0].lon);
+
+                   // distance(userlat,userlon,)
+
+                   for(var i =0;i<response.data.data.length;i++){
+
+                  /*  let coordinates = localStorage.getItem("coordinates")
+                    console.log(coordinates);
+
+                    let userlon = coordinates[0][2]
+                    let userlat = coordinates[1]
+
+                    console.log('[[[[[[[[[[[[');
+                    console.log(userlon);*/
+
+                        var j=0;
+                        //console.log(response.data.data[i][j].lon);
+                        var shopName = response.data.data[i][j].shopName
+                        console.log(shopName);
+                        console.log('<<<<<<<<');
+                        var shoplon = response.data.data[i][j].lon;
+                        var shoplat = response.data.data[i][j].lat;
+                        console.log(shoplat);
+
+                       var dist = distance(userlat, userlon, shoplat, shoplon)
+
+                        console.log(dist);
+
+                        showShops(shopName,dist)
+
+
+                   }
+
+                  /* response.data.data.forEach(element => {
+                        var shoplon = element
+                         var shoplat = element
+                       // console.log(element[0].shopName);
+                        console.log(element);
+
+                   })*/
+
+                   
+
+
+                    if(response.status === 201)
+                    {
+                        //window.location.href = "../login/login.html"
+
+                        console.log('location retirevd of products');
+                    }
+                    else if(response.status === 207) // not going to work in this scene
+                    {
+                        showExistingUser(response.data.message);
+                        //exist.innerText = '';
+                        //exist.innerText = `<h2>${response.data.newUserDetail}</h2>` 
+
+                    }
+
+                    else{
+                        throw new Error('Error failed to login')
+                    }
+                    
+                    
+                    //showListofRegisteredUser(response.data.newUserDetail)
+                    //console.log(response)
+               
+
+
+                
+            }
+
+
+            function showShops(shopName, distance){
+               // console.log(user);
+             //   const show = user.newUserDetail;
+                const parentNode = document.getElementById('listOfUsers');
+                const createNewUserHtml = `<li >${shopName}- ${distance} Meters
+                                            </li>
+                                            `
+              
+                parentNode.innerHTML +=  createNewUserHtml;
+
+               // document.getElementById("username").value = "";
+              // document.getElementById("emailId").value = "";
+              //  document.getElementById("phoneNo").value = "";
+               
+            }
+            
+
+            function distance(lat1, lon1, lat2, lon2) {
+                console.log(lat1);
+
+                
+                
+                    var radlat1 = Math.PI * lat1/180
+                    var radlat2 = Math.PI * lat2/180
+                    var theta = lon1-lon2
+                    var radtheta = Math.PI * theta/180
+                    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                    dist = Math.acos(dist)
+                    dist = dist * 180/Math.PI
+                    dist = dist * 60 * 1.1515
+                    dist = dist * 1.609344 //convert to km
+                   // dist = dist * 0.8684
+                    console.log('+++++++++++++++++++++');
+                    console.log(dist);
+                    return dist
+}
+
+         /*   function showExistingUser(user){
+               // console.log(user);
+             //   const show = user.newUserDetail;
+                const parentNode = document.getElementById('listOfUsers');
+                const createNewUserHtml = `<li >${user} 
+                                                
+                                            </li>
+                                            `
+              
+                parentNode.innerHTML +=  createNewUserHtml;
+
+               // document.getElementById("username").value = "";
+              // document.getElementById("emailId").value = "";
+              //  document.getElementById("phoneNo").value = "";
+               
+            }*/
+            
+
+ 
+        </script>
+
+
+    </body>
+</html>

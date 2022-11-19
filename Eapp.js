@@ -21,6 +21,7 @@ const Shop = require('./models/shop');
 
 
 
+
 const cors = require('cors');
 
 const compression = require('compression');
@@ -39,7 +40,7 @@ app.use(cors());
 
 const userRoutes = require('./routes/users');
 const shopRoutes = require('./routes/shopRoutes');
-
+const searchRoutes = require('./routes/searchRoutes')
 
 app.use(express.json())//instead of body parson json
 
@@ -53,10 +54,12 @@ app.use(express.json())//instead of body parson json
 app.use('/user',userRoutes);
 
 
+
+
 app.use('/shop',shopRoutes)
 
 
-
+app.use('/search',searchRoutes)
 
 
 app.use((req,res)=>{
@@ -67,8 +70,8 @@ app.use((req,res)=>{
 User.hasMany(Product);
 Product.belongsTo(User);
 
-Product.hasMany(Shop);
-Shop.belongsTo(Product);
+Shop.hasMany(Product);
+Product.belongsTo(Shop);
 
 
 //app.use(errorController.get404);
